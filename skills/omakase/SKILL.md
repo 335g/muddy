@@ -40,7 +40,7 @@ disable-model-invocation: true
 
 - サブエージェントの制御は `subagent-ctl` スキルの 5 動詞（spawn / send / wait / read / status）だけを使う。実行基盤（herdr-core）を直接呼ばない。
 - 新しい仕事は fresh なサブエージェントへ。スコープを統合して渡す（元の brief・その後の指示・先行報告・ブランチ）。
-- モデルはロール名（`code` / `judgment` / `prose` / `swarm workers`）で指定する。具体モデル名は書かない（`docs/model-roles.md`）。判定・検証は `judgment`（`code` と別ファミリー）。
+- モデルはロール名（`code` / `judgment` / `prose` / `swarm workers`）で指定する。具体モデル名は書かない。ロールの解決は `~/.config/omakase/models.md` にロール行があればその値、無ければ inherit-parent（親チャットのモデル）。判定・検証は `judgment`（`code` と別ファミリー）。
 - 子の作業は親が所有する。diff を自分でレビューし、要約は自分で書く。子の要約をそのまま転載しない。
 - 子の結果だけを信じない。実物（diff・実行結果・artifact）を確認する。
 

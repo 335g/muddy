@@ -18,7 +18,7 @@ description: N 個の並列ワーカーを張って回収し、1 つのレポー
 
 1. 完了述語と、swarm が返すべき artifact・レポートを宣言する。
 2. 形を選ぶ。スライスに分割 / 同一 brief で N ワーカーを競わせる / 混合。競わせる場合は `first pass` / `rank all` / `best-of` を先に宣言する。
-3. ワーカーのモデルは `swarm workers` ロール（`docs/model-roles.md`）。
+3. ワーカーのモデルは `swarm workers` ロール（`~/.config/omakase/models.md` に指定があればその値、無ければ inherit-parent）。
 4. 各ワーカーに、書くときは自分の書き込み先を与える。コミットを検証・計測する場合、brief は正確な SHA を名指しする。計測 brief は方法（サンプル数・1 サンプルとは何か・順序）も名指す。ワーカーは結果に両方を記録する。
 
 ## Phase B: Fan out
