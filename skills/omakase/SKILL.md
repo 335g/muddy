@@ -15,7 +15,7 @@ disable-model-invocation: true
 - 完全自律の許可下では、その許可がカバーする判断は自分で決めて実行し、報告する（「いいですか」と聞かない）。「常に止まる」の 4 項目と、人が名指ししたゲートだけは人に委ねる。
 - コードを書く前に、データ形状を先に名付ける。
 - 完了を宣言する前に、実物で検証する（`principle-prove-it-works`）。
-- 並列ファンアウトは `swarm`。単発の委任は `subagent-ctl` の 5 動詞。
+- 並列ファンアウトは `swarm`。単発の委任は `subagent-ctl` の 6 動詞。
 - 長距離・自律・人が離れて後でレビューする仕事は、決定ログを残す（`show-me-your-work`）。
 
 ## Principles（原則索引）
@@ -38,7 +38,7 @@ disable-model-invocation: true
 
 ## Subagents（委任）
 
-- サブエージェントの制御は `subagent-ctl` スキルの 5 動詞（spawn / send / wait / read / status）だけを使う。実行基盤（herdr-core）を直接呼ばない。
+- サブエージェントの制御は `subagent-ctl` スキルの 6 動詞（spawn / send / wait / read / status / interrupt）だけを使う。実行基盤（herdr-core）を直接呼ばない。
 - 新しい仕事は fresh なサブエージェントへ。スコープを統合して渡す（元の brief・その後の指示・先行報告・ブランチ）。
 - モデルはロール名（`code` / `judgment` / `prose` / `swarm workers`）で指定する。具体モデル名は書かない。ロールの解決は `~/.config/omakase/models.md` にロール行があればその値、無ければ inherit-parent（親チャットのモデル）。判定・検証は `judgment`（`code` と別ファミリー）。
 - 子の作業は親が所有する。diff を自分でレビューし、要約は自分で書く。子の要約をそのまま転載しない。

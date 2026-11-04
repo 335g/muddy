@@ -16,7 +16,7 @@ disable-model-invocation: true
 
 ## 2. 3 つのレビューを並列に立てる
 
-`subagent-ctl` の 5 動詞で並列に起動し、各レビューに transcript のパス（または要約）を渡す。
+`subagent-ctl` の 6 動詞で並列に起動し、各レビューに transcript のパス（または要約）を渡す。
 
 | レンズ | ロール | 見るもの |
 |--------|--------|----------|
