@@ -17,7 +17,11 @@
 - `## Blast Radius`: 誰に・何に触れるか、なぜ安全か 1〜2 文。
 - `## Verification`: 実際の実行経路と結果を 1〜3 bullet。
 
-**forge。** PR 操作は `gh` を使う。
+**forge。** PR 操作は、リポジトリのホストに応じて CLI を決める。GitHub は `gh`、Gitea（オンプレ）は `tea`。
+
+- 最初の PR 操作の前に 1 回解決し、以降同じ CLI を使う。
+- 優先順: `~/.config/omakase/models.md` の `forge = "github" | "gitea"` 明示 → `git remote get-url origin` のホスト（`github.com` → `gh`、それ以外 → `tea`）→ CLI の存在確認（`command -v gh` / `command -v tea`）。
+- 対応表: `gh pr create` ↔ `tea pr create`、`gh pr view <n>` ↔ `tea pr status`、`gh pr checks` ↔ `tea pr status`。`tea` の細かいサブコマンドは実機で確認して揃える。
 
 **サイズとスタック。** 大きい PR 1 本より狭い PR 5 本を優先。スタックは base-branch チェーン（子ブランチは親の tip に rebase、PR は親ブランチを base にする）。独立した作業は trunk から切る。
 
