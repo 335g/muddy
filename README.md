@@ -15,7 +15,7 @@ Human out of the loop —— 人による補助なしで自律的に開発が進
 
 - [Pi](https://pi.dev)（エージェントハーネス）
 - [herdr-core](https://herdr.dev/core/)（`hc`。サブエージェントの永続端末ランタイム）
-- [`gh`](https://cli.github.com/)（PR の作成・操作）
+- [`gh`](https://cli.github.com/)（GitHub の PR 操作）/ [`tea`](https://gitea.com/gitea/tea)（Gitea の PR 操作。オンプレの場合）
 
 ## インストール
 
@@ -99,6 +99,9 @@ skills/
 ```markdown
 # harness（任意。無ければ自動検出）
 harness = "pi"
+
+# forge（任意。無ければ git remote のホストから自動検出）
+forge = "github"  # または "gitea"
 
 # roles（1 行 1 ロール。無ければ inherit-parent）
 code = inherit-parent
