@@ -15,8 +15,8 @@ disable-model-invocation: true
 - 完全自律の許可下では、その許可がカバーする判断は自分で決めて実行し、報告する（「いいですか」と聞かない）。「常に止まる」の 4 項目と、人が名指ししたゲートだけは人に委ねる。
 - コードを書く前に、データ形状を先に名付ける。
 - 完了を宣言する前に、実物で検証する（`principle-prove-it-works`）。
-- 並列ファンアウトは `swarm`（L3 予定）。単発の委任は `subagent-ctl` の 5 動詞。
-- 長距離・自律・人が離れて後でレビューする仕事は、決定ログを残す（`show-me-your-work`。L3 予定）。
+- 並列ファンアウトは `swarm`。単発の委任は `subagent-ctl` の 5 動詞。
+- 長距離・自律・人が離れて後でレビューする仕事は、決定ログを残す（`show-me-your-work`）。
 
 ## Principles（原則索引）
 
@@ -58,7 +58,7 @@ disable-model-invocation: true
 
 ## Playbooks（索引）
 
-タスクを次のプレイブックへ振り分ける。未実装のプレイブックに該当するタスクは、`figure-it-out`（L4 予定）で自前設計する。
+タスクを次のプレイブックへ振り分ける。未実装のプレイブックに該当するタスクは、`figure-it-out` で自前設計する。
 
 | プレイブック | 対象 | 状態 |
 |-------------|------|------|
@@ -66,8 +66,8 @@ disable-model-invocation: true
 | bug-fix | バグ修正 | 実装済み |
 | refactoring | 構造変更 | 実装済み |
 | opening-a-pr | 他プレイブックの終端 | 実装済み |
-| pause-safely | 中断して再開可能にする | 未実装（L4） |
-| session-pickup | 前回の続きを再開 | 未実装（L4） |
-| autonomous-run | 完了条件まで回す | 未実装（L4） |
+| pause-safely | 中断して再開可能にする | 実装済み |
+| session-pickup | 前回の続きを再開 | 実装済み |
+| autonomous-run | 完了条件まで回す | 実装済み |
 | orchestrate | 複数 PR・複数日を 1 コーディネータで | 未実装（L5） |
 | autopilot-stack | 自動 build+verify、merge は人手 | 未実装（L5） |
