@@ -58,7 +58,7 @@ disable-model-invocation: true
 
 ## Playbooks（索引）
 
-タスクを次のプレイブックへ振り分ける。未実装のプレイブックに該当するタスクは、`figure-it-out` で自前設計する。
+タスクを次のプレイブックへ振り分ける。すべて実装済み。どのプレイブックにも合わないタスクは `figure-it-out` で自前設計する。
 
 | プレイブック | 対象 | 状態 |
 |-------------|------|------|
@@ -69,5 +69,5 @@ disable-model-invocation: true
 | pause-safely | 中断して再開可能にする | 実装済み |
 | session-pickup | 前回の続きを再開 | 実装済み |
 | autonomous-run | 完了条件まで回す | 実装済み |
-| orchestrate | 複数 PR・複数日を 1 コーディネータで | 未実装（L5） |
-| autopilot-stack | 自動 build+verify、merge は人手 | 未実装（L5） |
+| orchestrate | 複数 PR・複数日を 1 コーディネータで | 実装済み |
+| autopilot-stack | 自動 build+verify、merge は人手 | 実装済み |
