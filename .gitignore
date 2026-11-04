@@ -1,0 +1,11 @@
+# 基本的に全て管理対象外とする
+*
+
+# 管理するもの
+!.gitignore
+!/skills/
+!/skills/**
+
+# 絶対に監視しないものは明示的に拒否
+apm_modules/
+.env
