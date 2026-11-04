@@ -15,14 +15,14 @@ detect_harness() {
     h=$(grep -m1 '^harness' "$cfg" 2>/dev/null | sed 's/^harness *= *//' | tr -d '"' | xargs)
     [ -n "$h" ] && { echo "$h"; return 0; }
   fi
-  if env | grep -q '^PI_';              then echo "pi -ne";       return 0; fi
+  if env | grep -q '^PI_';              then echo "pi -p";       return 0; fi
   if env | grep -q '^OPENCODE_';        then echo "opencode run"; return 0; fi
   if env | grep -q '^CODEX_';           then echo "codex exec";   return 0; fi
   if env | grep -qE '^(CLAUDE_|ANTHROPIC_)'; then echo "claude -p"; return 0; fi
   for c in pi opencode codex claude; do
     if command -v "$c" >/dev/null 2>&1; then
       case "$c" in
-        pi)       echo "pi -ne";;
+        pi)       echo "pi -p";;
         opencode) echo "opencode run";;
         codex)    echo "codex exec";;
         claude)   echo "claude -p";;

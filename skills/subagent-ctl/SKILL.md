@@ -31,12 +31,12 @@ description: サブエージェントの制御（生成・送信・待受・読�
 
 | マーカー | ハーネス | spawn で実行する CLI |
 |----------|----------|---------------------|
-| `PI_*` | Pi | `pi -ne` |
+| `PI_*` | Pi | `pi -p` |
 | `OPENCODE_*` | OpenCode | `opencode run` |
 | `CODEX_*` | Codex | `codex exec` |
 | `CLAUDE_*` / `ANTHROPIC_*` | Claude Code | `claude -p` |
 
-各 CLI の非対話呼び出し形は、導入時に実機で確認してこの表を更新する（例: `pi -ne` が `pi run` かは環境次第）。
+各 CLI の非対話呼び出し形は、導入時に実機で確認してこの表を更新する（例: `pi -p` が `pi run` かは環境次第）。
 
 ## ルール
 
