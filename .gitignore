@@ -5,6 +5,7 @@
 !.gitignore
 !/skills/
 !/skills/**
+!LICENSE
 
 # 絶対に監視しないものは明示的に拒否
 apm_modules/
