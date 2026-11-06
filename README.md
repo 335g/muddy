@@ -6,7 +6,7 @@ Human out of the loop —— 人による補助なしで自律的に開発が進
 
 - **入口ルーター `omakase`** — タスクを 9 種類のプレイブックへ振り分け、原則・自律許可・委任規則を適用する。
 - **自律許可の明文化** — 「進めてよいこと」と「常に止まること」（force-push / deploy / データ削除 / 外部発信）を明示。
-- **サブエージェント制御 `subagent-ctl`** — 生成・送信・待受・読取・状態・中断の 6 動詞に集約。herdr-core 上で対話型エージェントを起動し、`hc send` でプロンプトを流し込む。
+- **サブエージェント制御 `subagent-ctl`** — 生成・送信・待受・読取・状態・中断・終了の 7 動詞に集約。herdr-core 上で対話型エージェントを起動し、`hc send` でプロンプトを流し込む。
 - **決定ログ `show-me-your-work`** — 1 決定 1 行の TSV。人が離れた後でも監査できる。
 - **並列検証 `swarm`** — N ワーカーを張って回収し、PASS/ISSUES/BLOCKED + 証拠で報告させる。
 - **継続改善 `reflect` / `correct`** — 会話から学びを採掘し、繰り返すミスを構造で不可能にする。
@@ -62,7 +62,7 @@ skills/
 │       ├── autonomous-run.md 完了条件まで回し続ける
 │       ├── orchestrate.md  複数 PR・複数日を 1 コーディネータで
 │       └── autopilot-stack.md 自動 build+verify、merge は人手
-├── subagent-ctl/           サブエージェント制御（6 動詞 + hc-adapter.sh）
+├── subagent-ctl/           サブエージェント制御（7 動詞 + hc-adapter.sh）
 ├── show-me-your-work/      決定ログ（TSV + log.sh）
 ├── swarm/                  並列検証
 ├── figure-it-out/          型に合わない仕事を自前プレイブック化
@@ -79,14 +79,15 @@ skills/
 
 | 動詞 | 意味 |
 |------|------|
-| `spawn(name)` | 対話型エージェントを起動して起動完了まで待つ |
+| `spawn(name)` | 対話型エージェントを起動し、アイドル到達まで待つ（既存名は失敗） |
 | `send(id, msg)` | メッセージ（初回タスク含む）を送る |
 | `wait(id)` | 完了・ニュースまで待つ |
 | `read(id, lines)` | 出力を読む |
 | `status(id?)` | 状態を取得 |
 | `interrupt(id)` | 現在の turn を止める（pause のトリガー） |
+| `stop(id)` | turn を止めてプロセスを終了する（後片付け） |
 
-ハーネス CLI は環境変数マーカーで自動検出します（Pi / OpenCode / Codex / Claude Code）。実行基盤を herdr-core から別のものに替えても、この 6 動詞を実装し直すだけで呼び出し側は変わりません。
+ハーネス CLI は環境変数マーカーで自動検出します（Pi / OpenCode / Codex / Claude Code）。実行基盤を herdr-core から別のものに替えても、この 7 動詞を実装し直すだけで呼び出し側は変わりません。
 
 ### モデルロール
 

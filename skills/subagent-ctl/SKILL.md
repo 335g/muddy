@@ -1,31 +1,38 @@
 ---
 name: subagent-ctl
-description: サブエージェントの制御（生成・送信・待受・読取・状態・中断）を薄い動詞セットに集約したインターフェース。実行基盤は herdr-core（hc）。エージェントは対話型で起動し、send でプロンプトを流し込む。スキル/プレイブックはこの動詞だけを呼ぶ。
+description: サブエージェントの制御（生成・送信・待受・読取・状態・中断・終了）を薄い動詞セットに集約したインターフェース。実行基盤は herdr-core（hc）。エージェントは対話型で起動し、send でプロンプトを流し込む。スキル/プレイブックはこの動詞だけを呼ぶ。
 ---
 
 # サブエージェント制御（subagent-ctl）
 
-サブエージェントの制御は、この 6 動詞だけを使う。実行基盤は herdr-core（`hc`）。`hc` を直接呼ばない。実行基盤を替えるとき（herdr-core → Rex 等）は、このスキルの動詞の実装だけを書き換える。
+サブエージェントの制御は、この 7 動詞だけを使う。実行基盤は herdr-core（`hc`）。`hc` を直接呼ばない。実行基盤を替えるとき（herdr-core → Rex 等）は、このスキルの動詞の実装だけを書き換える。
 
 ## 動詞
 
 | 動詞 | 意味 | hc での実装 |
 |------|------|------------|
-| `spawn(name)` | 対話型エージェントを起動して起動完了まで待つ | `hc run --bg --name <name> <harness-cli>` → `hc wait <name>` |
+| `spawn(name)` | 対話型エージェントを起動し、アイドル到達まで待つ。既存名は失敗 | `hc run --bg --name <name> <harness-cli>` → `hc wait <name> --timeout <N>` |
 | `send(id, msg)` | 実行中のエージェントにメッセージ（初回タスク含む）を送る | `hc send <id> "<msg>"`（turn 完了まで待つなら `--wait`） |
 | `wait(id)` | 完了・ニュースまで待つ | `hc wait <id>` / `hc wait --children any\|all` |
 | `read(id, lines)` | 出力を読む | `hc read <id> --lines <lines>` |
 | `status(id?)` | 状態を取得（引数なしは一覧） | `hc get <id>` / `hc ls` |
 | `interrupt(id)` | 現在の turn を止める（プロセスは生かす。pause のトリガー） | `hc interrupt <id>` |
+| `stop(id)` | turn を止めてプロセスを終了する（後片付け） | `hc interrupt <id>` → `hc kill <id>` |
 
-補助: `scripts/hc-adapter.sh` がこの動詞を薄く包む。
+補助: `scripts/hc-adapter.sh` がこの動詞を薄く包む。待ちの既定は 90 秒（`OMAKASE_SPAWN_TIMEOUT` で変更）。
 
 ## spawn の手順（対話型）
 
 1. `spawn(name)` はタスクを渡さず、**対話型**エージェントを起動する（非対話フラグを付けない）。
-2. 起動直後の `send` は落ちることがあるので、`hc wait <name>` で起動完了（trust ダイアログ等）を待つ。
-3. 初回タスクは `send(id, task)` で投入する。以降の指示・ステアリングも `send`。
-4. turn を止めたいときは `interrupt(id)`。プロセスは生きているので、`send` で再開・指示できる。
+2. **起動完了の述語は `reason=status` かつ `status=idle`。** `hc wait` は死んだプログラムでも
+   期限切れでも exit 0 を返すので、戻り値を読まずに成功とみなしてはいけない。戻りが
+   `exit` / `error` / `blocked` / `timeout` なら spawn の失敗として扱い、`hc get <name>` の
+   状態を添えて報告する。
+3. **名前は端末の id。** 既存名を渡すと `spawn` は失敗する（同名の端末が 2 つできると
+   `send` の宛先が決まらない）。同じ名前を使い直したいときは先に `stop` する。
+4. 初回タスクは `send(id, task)` で投入する。以降の指示・ステアリングも `send`。
+5. turn を止めたいときは `interrupt(id)`。プロセスは生きているので、`send` で再開・指示できる。
+6. 仕事が終わったら `stop(id)` でプロセスを終了する。`interrupt` だけではリソースが残る。
 
 ## ハーネス CLI 検出（3 段）
 
@@ -48,6 +55,6 @@ description: サブエージェントの制御（生成・送信・待受・読�
 
 ## ルール
 
-- スキル・プレイブックはこの 6 動詞だけを呼び、`hc` を直接呼ばない（差し替え耐性）。
+- スキル・プレイブックはこの 7 動詞だけを呼び、`hc` を直接呼ばない（差し替え耐性）。
 - サブエージェントにはこのスキルを読ませ、委任・報告・後片付けの手順を共有する。
 - 実行基盤を替える場合は、このスキルと `scripts/hc-adapter.sh` だけを書き換える。呼び出し側は変えない。
