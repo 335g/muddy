@@ -13,8 +13,8 @@ description: サブエージェントの制御（生成・送信・待受・読�
 |------|------|------------|
 | `spawn(name)` | 対話型エージェントを起動し、アイドル到達まで待つ。既存名は失敗 | `hc run --bg --name <name> <harness-cli>` → `hc wait <name> --timeout <N>` |
 | `send(id, msg)` | 実行中のエージェントにメッセージ（初回タスク含む）を送る | `hc send <id> "<msg>"`（turn 完了まで待つなら `--wait`） |
-| `wait(id)` | 完了・ニュースまで待つ | `hc wait <id>` / `hc wait --children any\|all` |
-| `read(id, lines)` | 出力を読む | `hc read <id> --lines <lines>` |
+| `wait(id)` | ターン終了・期限・脱落まで待つ。戻りの `reason` で分岐する（`status` / `timeout` / `exit` / `error` / `blocked`）。`--children` は hc の端末の中からのみ | `hc wait <id> --timeout <N>` / `hc wait --children any\|all` |
+| `read(id, lines)` | 画面を読む（長い報告はファイルに書かせて読む） | `hc read <id> --lines <lines>` |
 | `status(id?)` | 状態を取得（引数なしは一覧） | `hc get <id>` / `hc ls` |
 | `interrupt(id)` | 現在の turn を止める（プロセスは生かす。pause のトリガー） | `hc interrupt <id>` |
 | `stop(id)` | turn を止めてプロセスを終了する（後片付け） | `hc interrupt <id>` → `hc kill <id>` |
