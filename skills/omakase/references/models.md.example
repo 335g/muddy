@@ -1,0 +1,38 @@
+# omakase モデル割り当て（雛形）
+#
+# 使い方: このファイルを ~/.config/omakase/models.md にコピーし、使う行だけコメントを外す。
+# 雛形自体はコミットする（具体モデル名はコピー先にだけ書く）。
+#
+# 解決規則: 行があればその値、無ければ inherit-parent（親チャットのモデル）。
+# 未編集のまま使うと、すべて inherit-parent になる（安全側の既定）。
+
+# --- harness（任意） ---
+# 無ければ環境変数マーカーで自動検出する（PI_* → pi / OPENCODE_* → opencode /
+# CODEX_* → codex / CLAUDE_*・ANTHROPIC_* → claude）。PATH 探索が最後。
+# harness = pi
+
+# --- forge（任意） ---
+# 無ければ git remote のホストから決める（github.com → gh / それ以外 → tea）。
+# forge = github      # または gitea
+
+# --- roles ---
+
+# code — 実装・機械的編集（feature / bug-fix / refactoring）
+code = inherit-parent
+
+# judgment — 判定・レビュー。code と別ファミリーのモデルを入れる。
+# 別ファミリーが無い環境では inherit-parent のままにし、判定のたびに
+# 「独立性は未達」と代わりの担保を報告に書く（omakase SKILL.md の Subagents 節）。
+judgment = inherit-parent
+# judgment = <code と別ファミリーのモデル識別子>
+
+# prose — 文章・要約・PR 本文
+prose = inherit-parent
+
+# swarm workers — 並列検証ワーカー
+swarm workers = inherit-parent
+
+# --- 別ファミリーを用意できないときの代わりの担保（強い順） ---
+# 1. 基準実装・旧実装との差分で決める（モデルの独立性に頼らない）
+# 2. diff と brief だけを渡した新しいセッションに判定させる（錨は外れるが盲点は残る）
+# 3. 人間のレビューを依頼する

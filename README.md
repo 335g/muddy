@@ -95,7 +95,7 @@ skills/
 
 ## 設定
 
-`~/.config/omakase/models.md`（未コミットのユーザー環境ファイル）:
+`~/.config/omakase/models.md`（未コミットのユーザー環境ファイル）。雛形は [skills/omakase/references/models.md.example](./skills/omakase/references/models.md.example) をコピーして使います:
 
 ```markdown
 # harness（任意。無ければ自動検出）
