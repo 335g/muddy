@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # show-me-your-work 決定ログ（TSV）へ整った行を追記する。
 # 使い方: log.sh <logfile> <phase> <decision> <why> <evidence> <result>
+# evidence のパスはリポジトリルート基準（または絶対パス）。解決できないパスには
+# 警告を出すが、行は必ず書く（artifact は URL・SHA・リモートのパスもあるため）。
 set -euo pipefail
 
 if [ "$#" -ne 6 ]; then
@@ -34,6 +36,31 @@ clean() {
 		*) printf '%s' "$v" ;;
 	esac
 }
+# evidence のパスらしい項目が存在するかを確かめる。失敗にはしない。
+# 基準が曖昧なまま書かれた trail は、後から監査できない（実例: 5 行中 4 行のパスが解決しなかった）。
+warn_missing_evidence() {
+	local cell="$1" item path root
+	local IFS=','
+	root=$(git rev-parse --show-toplevel 2>/dev/null || true)
+	for item in $cell; do
+		item=$(printf '%s' "$item" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+		case "$item" in
+			*'://'*|commit*|sha*|'') continue ;;
+		esac
+		path="${item%%:*}"
+		case "$path" in
+			*/*|*.*) ;;
+			*) continue ;;
+		esac
+		[ -e "$path" ] && continue
+		[ -n "$root" ] && [ -e "$root/$path" ] && continue
+		printf 'warning: evidence not found: %s (tried: cwd and %s)\n' \
+			"$path" "${root:-<no git root>}" >&2
+	done
+}
+
+warn_missing_evidence "$4"
+
 printf '%s\t%s\t%s\t%s\t%s\t%s\n' \
 	"$ts" "$(clean "$1")" "$(clean "$2")" "$(clean "$3")" "$(clean "$4")" "$(clean "$5")" \
 	>> "$logfile"
