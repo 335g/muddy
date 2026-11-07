@@ -71,4 +71,4 @@ disable-model-invocation: true
 | session-pickup | 前回の続きを再開 |
 | autonomous-run | 終了条件を決めて、そこまで進める |
 | orchestrate | 複数の PR を、1 人のコーディネータで複数日進める |
-| autopilot-stack | build と verify を自動化し、merge は人が行う |
+| autopilot-stack | ビルドと検証は自動、マージは人が行う |
