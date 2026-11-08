@@ -66,6 +66,8 @@ skills/
 ├── show-me-your-work/      決定ログ（TSV + log.sh）
 ├── swarm/                  並列検証
 ├── figure-it-out/          型に合わない仕事を自前プレイブック化
+├── how/                    「どう動くか」をコードから説明する
+├── why/                    「なぜそうなったか」を履歴から調べる
 ├── reflect/                会話から学びをスキル編集へ
 ├── correct/                繰り返すミスを構造で不可能に
 └── principle-* × 6         判断の原則
@@ -79,7 +81,7 @@ skills/
 
 | 動詞 | 意味 |
 |------|------|
-| `spawn(name)` | 対話型エージェントを起動し、アイドル到達まで待つ（既存名は失敗） |
+| `spawn(name, readonly?)` | 対話型エージェントを起動し、アイドル到達まで待つ（既存名は失敗）。`readonly` で読み取り専用 |
 | `send(id, msg)` | メッセージ（初回タスク含む）を送る |
 | `wait(id)` | 完了・ニュースまで待つ |
 | `read(id, lines)` | 出力を読む |
@@ -87,7 +89,7 @@ skills/
 | `interrupt(id)` | 現在の turn を止める（pause のトリガー） |
 | `stop(id)` | turn を止めてプロセスを終了する（後片付け） |
 
-ハーネス CLI は環境変数マーカーで自動検出します（Pi / OpenCode / Codex / Claude Code）。実行基盤を herdr-core から別のものに替えても、この 7 動詞を実装し直すだけで呼び出し側は変わりません。
+ハーネス CLI は環境変数マーカーで自動検出します（Pi / OpenCode / Codex / Claude Code）。読み取り専用はハーネスのフラグで実現します（Pi: `--tools read,grep,find,ls`）。対応フラグを持たないハーネスでは保証せず、警告を出して報告に 1 行残します。実行基盤を herdr-core から別のものに替えても、この 7 動詞を実装し直すだけで呼び出し側は変わりません。
 
 ### モデルロール
 
