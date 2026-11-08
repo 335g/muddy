@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # hc-adapter: サブエージェント制御動詞の herdr-core（hc）実装。
 # 対話型エージェントを起動し、send でプロンプトを流し込む。
-#   hc-adapter spawn  <name>          # 対話型エージェント起動 + アイドル到達まで待つ
+#   hc-adapter spawn  <name> [--readonly]  # 対話型エージェント起動 + アイドル到達まで待つ
 #   hc-adapter send   <id> <msg>      # メッセージ送信（--wait で turn 完了まで待つ）
 #   hc-adapter wait   <id>            # 完了・ニュースまで待つ
 #   hc-adapter read   <id> [lines]    # 出力を読む
@@ -34,16 +34,34 @@ detect_harness() {
 # 起動完了の述語は「reason=status かつ status=idle」。hc wait は死んだプログラムでも
 # 期限切れでも exit 0 を返すので、戻り値を読まないと死んだエージェントを成功と誤認する。
 # キー順に依存しないよう、2 つの部分一致で判定する（jq 依存を増やさない）。
+# --- 読み取り専用フラグ（保証できないハーネスは失敗を返す） ---
+# CLI の第 1 語で判定する（models.md の harness 行はフラグを含みうる）。
+readonly_flags() {
+  case "${1%% *}" in
+    pi)     printf '%s' '--tools read,grep,find,ls';;
+    codex)  printf '%s' '--sandbox read-only';;
+    claude) printf '%s' '--permission-mode plan';;
+    *)      return 1;;
+  esac
+}
+
 spawn() {
-  local name="$1"
+  local name="$1" mode="${2:-}"
   local deadline="${OMAKASE_SPAWN_TIMEOUT:-90}"
-  local out cli
+  local out cli ro=""
   if hc get "$name" >/dev/null 2>&1; then
     printf 'spawn: name already in use: %s (hc-adapter stop %s first)\n' "$name" "$name" >&2
     return 1
   fi
   cli=$(detect_harness) || return 1
-  hc run --bg --name "$name" $cli >/dev/null
+  if [ "$mode" = "--readonly" ]; then
+    if ro=$(readonly_flags "$cli"); then :
+    else
+      ro=""
+      printf 'spawn: %s は読み取り専用を保証できません（対応フラグなし）。指示文で読み取り専用を伝え、報告にも 1 行残す\n' "${cli%% *}" >&2
+    fi
+  fi
+  hc run --bg --name "$name" $cli $ro >/dev/null
   out=$(hc wait "$name" --timeout "$deadline")
   case "$out" in
     *'"reason":"status"'*) ;;
@@ -61,13 +79,26 @@ status(){ if [ "$#" -eq 0 ]; then hc ls; else hc get "$@"; fi; }
 interrupt(){ hc interrupt "$@"; }
 stop()  { local id="$1"; hc interrupt "$id" >/dev/null 2>&1 || true; hc kill "$id" >/dev/null 2>&1 || true; }
 
+# 対応表の自己確認（hc を起動しない）。追加したハーネスのフラグが反映されるかを確かめる。
+selftest() {
+  local want got fail=0
+  for want in 'pi:--tools read,grep,find,ls' 'codex:--sandbox read-only' 'claude:--permission-mode plan'; do
+    got=$(readonly_flags "${want%%:*}") || { printf 'selftest: %s が空\n' "${want%%:*}" >&2; fail=1; continue; }
+    [ "$got" = "${want#*:}" ] || { printf 'selftest: %s -> %s (期待 %s)\n' "${want%%:*}" "$got" "${want#*:}" >&2; fail=1; }
+  done
+  readonly_flags opencode && { echo 'selftest: opencode は保証対象外なのにフラグを返した' >&2; fail=1; }
+  [ "$fail" -eq 0 ] && echo 'selftest: ok'
+  return "$fail"
+}
+
 case "${1:-}" in
   spawn)     shift; spawn "$@";;
+  selftest)  shift; selftest "$@";;
   send)      shift; send "$@";;
   wait)      shift; wait "$@";;
   read)      shift; read "$@";;
   status)    shift; status "$@";;
   interrupt) shift; interrupt "$@";;
   stop)      shift; stop "$@";;
-  *) echo "usage: hc-adapter <spawn|send|wait|read|status|interrupt|stop> ..." >&2; exit 2;;
+  *) echo "usage: hc-adapter <spawn|send|wait|read|status|interrupt|stop|selftest> ..." >&2; exit 2;;
 esac

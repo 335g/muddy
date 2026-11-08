@@ -11,7 +11,7 @@ description: サブエージェントの制御（生成・送信・待受・読�
 
 | 動詞 | 意味 | hc での実装 |
 |------|------|------------|
-| `spawn(name)` | 対話型エージェントを起動し、アイドル到達まで待つ。既存名は失敗 | `hc run --bg --name <name> <harness-cli>` → `hc wait <name> --timeout <N>` |
+| `spawn(name)` | 対話型エージェントを起動し、アイドル到達まで待つ。既存名は失敗。`readonly` を付けると読み取り専用で起動する | `hc run --bg --name <name> <harness-cli> [読み取り専用フラグ]` → `hc wait <name> --timeout <N>` |
 | `send(id, msg)` | 実行中のエージェントにメッセージ（初回タスク含む）を送る | `hc send <id> "<msg>"`（turn 完了まで待つなら `--wait`） |
 | `wait(id)` | ターン終了・期限・脱落まで待つ。戻りの `reason` で分岐する（`status` / `timeout` / `exit` / `error` / `blocked`）。`--children` は hc の端末の中からのみ | `hc wait <id> --timeout <N>` / `hc wait --children any\|all` |
 | `read(id, lines)` | 画面を読む（長い報告はファイルに書かせて読む） | `hc read <id> --lines <lines>` |
@@ -19,7 +19,7 @@ description: サブエージェントの制御（生成・送信・待受・読�
 | `interrupt(id)` | 現在の turn を止める（プロセスは生かす。pause のトリガー） | `hc interrupt <id>` |
 | `stop(id)` | turn を止めてプロセスを終了する（後片付け） | `hc interrupt <id>` → `hc kill <id>` |
 
-補助: `scripts/hc-adapter.sh` がこの動詞を薄く包む。待ちの既定は 90 秒（`OMAKASE_SPAWN_TIMEOUT` で変更）。
+補助: `scripts/hc-adapter.sh` がこの動詞を薄く包む。待ちの既定は 90 秒（`OMAKASE_SPAWN_TIMEOUT` で変更）。読み取り専用フラグの対応表は `hc-adapter.sh selftest` で確かめられる。
 
 ## spawn の手順（対話型）
 
@@ -44,12 +44,14 @@ description: サブエージェントの制御（生成・送信・待受・読�
 
 ## 検出テーブル（保守用。ハーネス追加は 1 行）
 
-| マーカー | ハーネス | 起動コマンド（対話型） |
-|----------|----------|------------------------|
-| `PI_*` | Pi | `pi` |
-| `OPENCODE_*` | OpenCode | `opencode` |
-| `CODEX_*` | Codex | `codex` |
-| `CLAUDE_*` / `ANTHROPIC_*` | Claude Code | `claude` |
+| マーカー | ハーネス | 起動コマンド（対話型） | 読み取り専用フラグ |
+|----------|----------|------------------------|--------------------|
+| `PI_*` | Pi | `pi` | `--tools read,grep,find,ls` |
+| `OPENCODE_*` | OpenCode | `opencode` | なし（保証しない） |
+| `CODEX_*` | Codex | `codex` | `--sandbox read-only` |
+| `CLAUDE_*` / `ANTHROPIC_*` | Claude Code | `claude` | `--permission-mode plan` |
+
+Pi 以外のフラグは実機で未検証。読み取り専用フラグが無いハーネスでは、`spawn --readonly` は警告を出して通常起動に落ちる（保証しない）。その場合は指示文で読み取り専用を伝え、報告に「読み取り専用は未保証」と 1 行残す。
 
 モデル指定フラグ（`pi --provider <p> --model <m> --thinking <level>` 等）は、導入時に実機確認して `spawn` へ渡せるようにする。
 
