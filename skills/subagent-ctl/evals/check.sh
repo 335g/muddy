@@ -7,10 +7,17 @@ set -uo pipefail
 
 sessions_root() { printf '%s' "${PI_SESSIONS:-$HOME/.pi/agent/sessions}"; }
 
+# Pi のセッションは cwd から slug を作る。先頭の / を落として / を - に置き換える。
+# macOS では /tmp が /private/tmp に解決されるので、実パスでも探す。
+slug_of() { printf '%s' "${1#/}" | sed 's|/|-|g'; }
+
 transcript() {
-  local dir="$1" slug
-  slug="--$(printf '%s' "$dir" | sed 's|/|-|g')--"
-  ls -t "$(sessions_root)/$slug"/*.jsonl 2>/dev/null | head -1
+  local dir="$1" cand found
+  for cand in "$dir" "$(cd "$dir" 2>/dev/null && pwd -P)"; do
+    found=$(ls -t "$(sessions_root)/--$(slug_of "$cand")--"/*.jsonl 2>/dev/null | head -1)
+    if [ -n "$found" ]; then printf '%s' "$found"; return 0; fi
+  done
+  return 1
 }
 
 # transcript から、候補が実際に打った bash コマンドを数える。
@@ -68,14 +75,18 @@ main() {
   check() { total=$((total + 1)); if [ "$1" = ok ]; then detail+="ok   $2"$'\n'; else fail=$((fail + 1)); detail+="FAIL $2"$'\n'; reason="${reason:-$2}"; fi; }
 
   if [ -z "$file" ]; then
-    check fail "transcript が見つからない（$(sessions_root)/--${cwd//\//-}--）"
+    check fail "transcript が見つからない（$(sessions_root)/--$(slug_of "$(cd "$cwd" && pwd -P)")--）"
   fi
-  if [ "$spawn" -ge 2 ]; then check ok "委任が 2 体以上（spawn ${spawn}）"; else check fail "委任が 2 体未満（spawn ${spawn}）"; fi
-  if [ "$spawn" -eq "$stop" ]; then check ok "後片付け（spawn ${spawn} / stop ${stop}）"; else check fail "stop 漏れ（spawn ${spawn} / stop ${stop}）"; fi
+  # 委任が無いときは、後片付けと reason の判定は空振りする。数えない。
+  if [ "$spawn" -ge 2 ]; then
+    check ok "委任が 2 体以上（spawn ${spawn}）"
+    if [ "$spawn" -eq "$stop" ]; then check ok "後片付け（spawn ${spawn} / stop ${stop}）"; else check fail "stop 漏れ（spawn ${spawn} / stop ${stop}）"; fi
+    local said; said=$(grep -o 'reason' "$reply" 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$said" -ge "$spawn" ]; then check ok "待ちの reason を報告（${said} 箇所）"; else check fail "reason の報告が足りない（${said} / spawn ${spawn}）"; fi
+  else
+    check fail "委任が 2 体未満（spawn ${spawn}）"
+  fi
   if [ "$direct" -eq 0 ]; then check ok "hc を直接呼んでいない"; else check fail "hc を直接呼んだ（${direct} 回）"; fi
-
-  local said; said=$(grep -o 'reason' "$reply" 2>/dev/null | wc -l | tr -d ' ')
-  if [ "$said" -ge "$spawn" ] && [ "$spawn" -gt 0 ]; then check ok "待ちの reason を報告（${said} 箇所）"; else check fail "reason の報告が足りない（${said} / spawn ${spawn}）"; fi
 
   if [ -n "$task" ]; then
     if bash "$task/verify.sh" "$cwd" >/dev/null 2>&1; then check ok "成果物が通る（$task/verify.sh）"; else check fail "成果物が通らない（$task/verify.sh）"; fi
@@ -92,7 +103,7 @@ selftest() {
   local root; root=$(mktemp -d)
   local dir="$root/case" ok=0 bad=0 slug
   mkdir -p "$dir/work" "$dir/task"
-  slug="--$(printf '%s' "$dir/work" | sed 's|/|-|g')--"
+  slug="--$(slug_of "$dir/work")--"
   mkdir -p "$dir/sessions/$slug"
 
   # 規約を守った候補。

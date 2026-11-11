@@ -26,12 +26,12 @@
 2. **環境。** 候補ごとに作業ディレクトリを作る。スキルとタスクを ref から展開する:
 
    ```sh
-   git archive <ref> skills/<skill> | tar -x -C <dir>/.agents/skills/
+   git archive <ref> skills/<skill> | tar -x -C <dir>/.agents/skills/ --strip-components=1
    cp -R skills/<skill>/evals/<task>/work/. <dir>/
    ```
 
 3. **プロンプト。** `evals/<task>/task.md` の文面をそのまま使う。質問を足さない。
-4. **走らせる。** `subagent-ctl` で variant ごとに 1 体。モデルは `code` ロール。1 体ずつ、別のディレクトリで。
+4. **走らせる。** `subagent-ctl` で variant ごとに 1 体。モデルは `code` ロール。1 体ずつ、別のディレクトリで。初回起動は信頼の確認で止まるので、`spawn` が `reason: timeout` で返ったら `hc read <id>` で画面を見て `hc keys <id> enter` を送る。
 5. **層1 機械判定。** `skills/<skill>/evals/check.sh --cwd <dir> --reply <返信>` を各候補に走らせる。規約の遵守と成果物の合否は、ここで機械的に出る。
 6. **層2 判定。** `judgment` ロール（`code` とは別ファミリー）の judge 1 体。ラベル A / B で匿名化し、rubric・層1 の結果・候補の返信・成果物の diff を渡す。返信だけでは委任の質は測れない。別ファミリーを用意できないときは、独立性を主張せず、その旨を報告に 1 行書く。
 7. **自分で全出力を読む。** judge と食い違ったら、判定をやり直さない。`inconclusive` と書いて人に渡す。
