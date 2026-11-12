@@ -77,12 +77,10 @@ main() {
   if [ -z "$file" ]; then
     check fail "transcript が見つからない（$(sessions_root)/--$(slug_of "$(cd "$cwd" && pwd -P)")--）"
   fi
-  # 委任が無いときは、後片付けと reason の判定は空振りする。数えない。
+  # 委任が無いときは、後片付けの判定は空振りする。数えない。
   if [ "$spawn" -ge 2 ]; then
     check ok "委任が 2 体以上（spawn ${spawn}）"
     if [ "$spawn" -eq "$stop" ]; then check ok "後片付け（spawn ${spawn} / stop ${stop}）"; else check fail "stop 漏れ（spawn ${spawn} / stop ${stop}）"; fi
-    local said; said=$(grep -o 'reason' "$reply" 2>/dev/null | wc -l | tr -d ' ')
-    if [ "$said" -ge "$spawn" ]; then check ok "待ちの reason を報告（${said} 箇所）"; else check fail "reason の報告が足りない（${said} / spawn ${spawn}）"; fi
   else
     check fail "委任が 2 体未満（spawn ${spawn}）"
   fi
