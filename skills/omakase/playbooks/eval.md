@@ -26,9 +26,11 @@
 2. **環境。** 候補ごとに作業ディレクトリを作る。スキルとタスクを ref から展開する:
 
    ```sh
-   git archive <ref> skills/<skill> | tar -x -C <dir>/.agents/skills/ --strip-components=1
+   git archive <ref> skills/<skill> | tar -x -C <dir>/.agents/skills/ --strip-components=1 --exclude 'skills/<skill>/evals'
    cp -R skills/<skill>/evals/<task>/work/. <dir>/
    ```
+
+   `evals/` を除く。タスク文と判定器が候補に見えると、評価そのものが壊れる。
 
 3. **プロンプト。** `evals/<task>/task.md` の文面をそのまま使う。質問を足さない。
 4. **走らせる。** `subagent-ctl` で variant ごとに 1 体。モデルは `code` ロール。1 体ずつ、別のディレクトリで。初回起動は信頼の確認で止まるので、`spawn` が `reason: timeout` で返ったら `hc read <id>` で画面を見て `hc keys <id> enter` を送る。

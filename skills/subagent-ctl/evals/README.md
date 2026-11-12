@@ -15,7 +15,7 @@
 `eval` playbook の手順 2〜5 を、このディレクトリを対象に回す。
 
 ```sh
-git archive <ref> skills/subagent-ctl | tar -x -C "$dir/.agents/skills/" --strip-components=1
+git archive <ref> skills/subagent-ctl | tar -x -C "$dir/.agents/skills/" --strip-components=1 --exclude 'skills/subagent-ctl/evals'
 cp -R skills/subagent-ctl/evals/task-01/work/. "$dir/"
 bash skills/subagent-ctl/evals/check.sh --cwd "$dir" --reply "$dir.reply" --task skills/subagent-ctl/evals/task-01
 ```
