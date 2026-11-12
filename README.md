@@ -4,7 +4,7 @@ Human out of the loop —— 人による補助なしで自律的に開発が進
 
 ## 特徴
 
-- **入口ルーター `omakase`** — タスクを 9 種類のプレイブックへ振り分け、原則・自律許可・委任規則を適用する。
+- **入口ルーター `omakase`** — タスクを 11 種類のプレイブックへ振り分け、原則・自律許可・委任規則を適用する。
 - **自律許可の明文化** — 「進めてよいこと」と「常に止まること」（force-push / deploy / データ削除 / 外部発信）を明示。
 - **サブエージェント制御 `subagent-ctl`** — 生成・送信・待受・読取・状態・中断・終了の 7 動詞に集約。herdr-core 上で対話型エージェントを起動し、`hc send` でプロンプトを流し込む。
 - **決定ログ `show-me-your-work`** — 1 決定 1 行の TSV。人が離れた後でも監査できる。
@@ -52,7 +52,7 @@ omakase がタスクをプレイブックへ振り分け、todo にステップ�
 ```
 skills/
 ├── omakase/                入口ルーター
-│   └── playbooks/          プレイブック 9 種
+│   └── playbooks/          プレイブック 11 種
 │       ├── feature.md      新規実装・挙動変更
 │       ├── bug-fix.md      バグ修正（repro が先）
 │       ├── refactoring.md  構造変更（挙動は変えない）
@@ -61,8 +61,11 @@ skills/
 │       ├── session-pickup.md 前回の続きを再開する
 │       ├── autonomous-run.md 完了条件まで回し続ける
 │       ├── orchestrate.md  複数 PR・複数日を 1 コーディネータで
-│       └── autopilot-stack.md 自動 build+verify、merge は人手
+│       ├── autopilot-stack.md 自動 build+verify、merge は人手
+│       ├── authoring-a-skill.md スキルの作成・変更
+│       └── eval.md         スキル変更の効果をブラインドで測る
 ├── subagent-ctl/           サブエージェント制御（7 動詞 + hc-adapter.sh）
+│   └── evals/              層1 の機械判定（check.sh + task-01）
 ├── show-me-your-work/      決定ログ（TSV + log.sh）
 ├── swarm/                  並列検証
 ├── figure-it-out/          型に合わない仕事を自前プレイブック化

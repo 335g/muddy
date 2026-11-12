@@ -1,0 +1,28 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: スキルの構造（frontmatter・参照・索引）
+        run: node scripts/check-skills.mjs
+
+      - name: ハーネスフラグの対応表
+        run: bash skills/subagent-ctl/scripts/hc-adapter.sh selftest
+
+      - name: eval の判定器
+        run: bash skills/subagent-ctl/evals/check.sh --selftest
+
+      - name: eval のタスクが落ちたままであること
+        run: bash skills/subagent-ctl/evals/task-01/verify.sh skills/subagent-ctl/evals/task-01/work && exit 1 || exit 0

@@ -72,3 +72,5 @@ disable-model-invocation: true
 | autonomous-run | 終了条件を決めて、そこまで進める |
 | orchestrate | 複数の PR を、1 人のコーディネータで複数日進める |
 | autopilot-stack | ビルドと検証は自動、マージは人が行う |
+| authoring-a-skill | スキルの作成・変更 |
+| eval | スキル変更の効果を、ブラインドで測る |

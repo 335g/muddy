@@ -14,7 +14,7 @@ description: 期間が長い、自律的に進める、複数段階に分かれ�
 `references/decision-log-template.tsv`（ヘッダ行）をコピーして開始する。列:
 
 - **ts.** ISO8601 タイムスタンプ。
-- **phase.** 作業の種類。既定は `frame` / `design` / `build` / `verify` / `handoff`。実行の区切り（ラウンド番号など）は decision 側に書き、phase には種類だけを入れる。
+- **phase.** 作業の種類。既定は `frame` / `design` / `build` / `verify` / `handoff`。スキルの評価は `eval`。実行の区切り（ラウンド番号など）は decision 側に書き、phase には種類だけを入れる。
 - **decision.** 何を選んだ・何をしたか、1 行。
 - **why.** 理由を平易に。原則が理由なら、ジャーゴンでなく平易に書く。
 - **evidence.** ポインタをカンマ区切りで並べる。パスはリポジトリルート基準（または絶対パス）、行を指すなら `path:12`。コミット SHA、PR 番号、再実行できるコマンド、artifact の URL も可。段落にしない。

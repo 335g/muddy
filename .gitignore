@@ -3,6 +3,10 @@
 
 # 管理するもの
 !.gitignore
+!/.github/
+!/.github/**
+!/scripts/
+!/scripts/**
 !/skills/
 !/skills/**
 !LICENSE
