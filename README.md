@@ -84,7 +84,7 @@ skills/
 
 | 動詞 | 意味 |
 |------|------|
-| `spawn(name, readonly?)` | 対話型エージェントを起動し、アイドル到達まで待つ（既存名は失敗）。`readonly` で読み取り専用 |
+| `spawn(name, readonly?, role?)` | 対話型エージェントを起動し、アイドル到達まで待つ（既存名は失敗）。`readonly` で読み取り専用。`role` の既定は `code` |
 | `send(id, msg)` | メッセージ（初回タスク含む）を送る |
 | `wait(id)` | 完了・ニュースまで待つ |
 | `read(id, lines)` | 出力を読む |
