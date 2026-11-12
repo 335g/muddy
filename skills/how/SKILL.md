@@ -33,7 +33,7 @@ description: 「X はどう動くか」をコードベースから説明する�
 
 `subagent-ctl` で explorer を同時に起動する。
 
-1. `spawn(<name>, readonly)` で読み取り専用のエージェントを、切り口の数だけ起動する。モデルは `code` ロール
+1. `spawn(<name>, readonly, --role code)` で読み取り専用のエージェントを、切り口の数だけ起動する。モデルは `code` ロール（`--role` の既定）
 2. `send(<id>, <切り口の指示>)` で、担当する切り口と、返す形式（ファイル・行・キーになるシンボル）を渡す
 3. `wait(<id>)` の `reason` が `status` になるまで待ち、`read(<id>, <lines>)` で回収する。長い報告はファイルに書かせて読む
 4. 回収したら `stop(<id>)` で片付ける
