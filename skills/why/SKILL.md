@@ -46,7 +46,7 @@ description: 「なぜこうなっているか」を履歴から調べる。設�
 | 文書 | `docs/`、ADR、`README`、コードのコメント |
 | データ | 閾値や設定値の根拠（計測・実験の記録があれば） |
 
-`spawn(<name>, readonly)` → `send(<id>, <錨と切り口>)` → `wait(<id>)` → `read(<id>, <lines>)` → `stop(<id>)`。モデルは `code` ロール。
+`spawn(<name>, readonly, --role code)` → `send(<id>, <錨と切り口>)` → `wait(<id>)` → `read(<id>, <lines>)` → `stop(<id>)`。モデルは `code` ロール。
 
 見つからなかった切り口も記録する。「調べたが無かった」は結果であり、抜けではない。
 
