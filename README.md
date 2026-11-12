@@ -31,18 +31,18 @@ pi install ./muddy
 
 ## 使い方
 
-タスクの最初に `/omakase` を付け、**目標と完了条件**を伝えるだけです。
+タスクの最初に `/skill:omakase` を付け、**目標と完了条件**を伝えるだけです。Pi のスキルコマンドは `/skill:<name>` です。
 
 ```text
-/omakase この PR にスクロールが毎 750ms ずれるバグがある。repro してから直して検証して。
+/skill:omakase この PR にスクロールが毎 750ms ずれるバグがある。repro してから直して検証して。
 ```
 
 ```text
-/omakase 寝てくる。このスタックを全部マージして。CI が flake っても進めて。
+/skill:omakase 寝てくる。このスタックを全部マージして。CI が flake っても進めて。
 ```
 
 ```text
-/omakase calc に multiply 関数とテストを追加して。完了条件は python3 test_calc.py が OK を出力すること。
+/skill:omakase calc に multiply 関数とテストを追加して。完了条件は python3 test_calc.py が OK を出力すること。
 ```
 
 omakase がタスクをプレイブックへ振り分け、todo にステップを展開し、必要なスキルを呼びます。

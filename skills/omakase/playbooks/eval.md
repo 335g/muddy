@@ -31,7 +31,7 @@
    ```
 
 3. **プロンプト。** `evals/<task>/task.md` の文面をそのまま使う。質問を足さない。
-4. **走らせる。** `subagent-ctl` で variant ごとに 1 体。モデルは `code` ロール。1 体ずつ、別のディレクトリで。初回起動は信頼の確認で止まるので、`spawn` が `reason: timeout` で返ったら `hc read <id>` で画面を見て `hc keys <id> enter` を送る。
+4. **走らせる。** `subagent-ctl` で variant ごとに 1 体。モデルは `code` ロール。1 体ずつ、別のディレクトリで。`disable-model-invocation: true` のスキル（`omakase` など）は自動で選ばれないので、`/skill:<name> <依頼>` の形で送る。初回起動は信頼の確認で止まるので、`spawn` が `reason: timeout` で返ったら `hc read <id>` で画面を見て `hc keys <id> enter` を送る。
 5. **層1 機械判定。** `skills/<skill>/evals/check.sh --cwd <dir> --reply <返信>` を各候補に走らせる。規約の遵守と成果物の合否は、ここで機械的に出る。
 6. **層2 判定。** `judgment` ロール（`code` とは別ファミリー）の judge 1 体。ラベル A / B で匿名化し、rubric・層1 の結果・候補の返信・成果物の diff を渡す。返信だけでは委任の質は測れない。別ファミリーを用意できないときは、独立性を主張せず、その旨を報告に 1 行書く。
 7. **自分で全出力を読む。** judge と食い違ったら、判定をやり直さない。`inconclusive` と書いて人に渡す。
@@ -45,6 +45,7 @@
 - 層1 fail が 1 つでもある、または層2 が A より悪い → **revert 推奨**
 - judge が A / B を判別できない、rubric を変えた、層1 で測れない種類の変更 → **inconclusive**（人が決める）
 - 成果物が同一で、差が手順にだけ出たときは、層2 は判別できない。層1 で決め、判定に「層2 は判別不能」と書く
+- A と B が同じ判定（両方 pass / 両方 fail）のとき、変更が効かないのか 1 回のばらつきなのかは区別できない。promote の根拠にするのは、層1 が A で fail、B で pass に反転したときだけにする
 
 適用は `reflect` と同じく明示承認を待つ。自動適用しない。
 
